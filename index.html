@@ -424,7 +424,7 @@ kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
       <button type="button" class="link" id="setbtn">Settings</button>
       <button type="button" class="link" id="newsbtn">What's new</button>
     </div>
-    <footer class="h-foot">Playtest v29.5 · Keyboard, gamepad or touch<span id="h-keys"></span></footer>
+    <footer class="h-foot">Playtest v29.6 · Keyboard, gamepad or touch<span id="h-keys"></span></footer>
   </div>
 </div>
 
@@ -476,6 +476,7 @@ kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-t">
     <h2 id="news-t">What's new</h2>
     <ul class="news-l">
+      <li><b>v29.6</b> Fixed: Pack Battle could not be set to 3 or 5 beasts.</li>
       <li><b>v29.5</b> Touch controls stay see-through even while pressed; the fight-start banner is see-through; Lumen Ray's reverse button shows a reverse sign instead of the word BACK.</li>
       <li><b>v29.4</b> New look: titles, results, the fight banner and the main buttons use a rounded face that matches the logo. Touch controls in your side's colours - orange for Coral beasts, blue-violet for Abyssal ones: a glowing ring with a nautilus pearl to steer, a spike button to fire, and a whirlpool for the special that lights up and turns when it is ready.</li>
       <li><b>v29.3</b> Look closer: tap the magnifier under any clip, the clip itself, or the beasts on the result screen to see the beast full screen in its original detail - pinch or scroll to zoom, drag to look around. The keyboard guide now shows only before your first fight, in your first two fights, on the pause screen, and for 2-player games.</li>
@@ -4080,7 +4081,7 @@ function buildFleetSelect() { const own = S.FLEET[FL.side]; FL.pick = FL.pick.fi
   if (!FL.focus || !own.includes(FL.focus)) FL.focus = FL.pick[FL.pick.length - 1] || own[0]; if (!DV.fl) DV.fl = demoBlock($('fl-det'), FL.focus); DV.fl.set(FL.focus); // v28: the last ship you tapped, in action
   $('fl-go').disabled = FL.pick.length !== FL.size; $('fl-go').style.opacity = FL.pick.length === FL.size ? 1 : 0.45;
   const seg = (id, get, set) => [...$(id).children].forEach((b) => { b.setAttribute('aria-pressed', String(String(get()) === b.dataset.v)); b.onclick = () => { sfx('ui'); set(b.dataset.v); buildFleetSelect(); }; });
-  seg('fl-side', () => FL.side, (v) => { FL.side = v; FL.pick = []; }); seg('fl-diff', () => (G.diff === 'pvp' ? 'normal' : G.diff), (v) => { G.diff = v; }); // v29.2: packs and Reef War pick their own difficulty seg('fl-size', () => FL.size, (v) => { FL.size = +v; });
+  seg('fl-side', () => FL.side, (v) => { FL.side = v; FL.pick = []; }); seg('fl-diff', () => (G.diff === 'pvp' ? 'normal' : G.diff), (v) => { G.diff = v; }); /* v29.2: packs and Reef War pick their own difficulty */ seg('fl-size', () => FL.size, (v) => { FL.size = +v; });
   $('fl-rand').onclick = () => { sfx('ui'); FL.pick = [...own].sort(() => Math.random() - 0.5).slice(0, FL.size); buildFleetSelect(); };
   $('fl-back').onclick = () => { sfx('ui'); $('fleet').hidden = true; showSelect(); };
   $('fl-go').textContent = FL.reef ? 'Start Reef War' : 'Start pack battle'; $('fl-title').textContent = FL.reef ? 'Reef War' : 'Pack Battle'; $('fl-sub').textContent = FL.reef ? 'Pick the beasts you take to war. Move them across the reef map; when two packs meet, they duel.' : 'One at a time. The winner stays in, damaged. Last beast standing wins.'; $('fl-size').hidden = !!FL.reef; $('fl-fog').hidden = !FL.reef; seg('fl-fog', () => (FL.fog ? 'on' : 'off'), (v) => { FL.fog = v === 'on'; });
