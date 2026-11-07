@@ -424,7 +424,7 @@ kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
       <button type="button" class="link" id="setbtn">Settings</button>
       <button type="button" class="link" id="newsbtn">What's new</button>
     </div>
-    <footer class="h-foot">Playtest v29.4 · Keyboard, gamepad or touch<span id="h-keys"></span></footer>
+    <footer class="h-foot">Playtest v29.5 · Keyboard, gamepad or touch<span id="h-keys"></span></footer>
   </div>
 </div>
 
@@ -476,6 +476,7 @@ kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-t">
     <h2 id="news-t">What's new</h2>
     <ul class="news-l">
+      <li><b>v29.5</b> Touch controls stay see-through even while pressed; the fight-start banner is see-through; Lumen Ray's reverse button shows a reverse sign instead of the word BACK.</li>
       <li><b>v29.4</b> New look: titles, results, the fight banner and the main buttons use a rounded face that matches the logo. Touch controls in your side's colours - orange for Coral beasts, blue-violet for Abyssal ones: a glowing ring with a nautilus pearl to steer, a spike button to fire, and a whirlpool for the special that lights up and turns when it is ready.</li>
       <li><b>v29.3</b> Look closer: tap the magnifier under any clip, the clip itself, or the beasts on the result screen to see the beast full screen in its original detail - pinch or scroll to zoom, drag to look around. The keyboard guide now shows only before your first fight, in your first two fights, on the pause screen, and for 2-player games.</li>
       <li><b>v29.2</b> Fixed: on touch screens the steering stick could freeze (if a duel ended while your thumb was on it, the beast kept flying straight in the next duel). Pack Battle and Reef War now have their own difficulty choice. On a computer, the keys are shown as keycaps on the Duel screen, for the first seconds of each fight and on the pause screen (P).</li>
@@ -3788,7 +3789,7 @@ function drawHUD() {
     if (v.readyFlash > 0 && G.human[i]) { const a = Math.min(1, v.readyFlash * 2); ctx.font = `600 ${13 * u}px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`; ctx.fillStyle = rgba(col, a); ctx.fillText('READY', right ? x - 10 * u : x + pw + 10 * u, y + 40 * u); }
   });
   ctx.textAlign = 'center';
-  if (G.banner && G.banner.t < 3) { const a = G.banner.t < 0.3 ? G.banner.t / 0.3 : G.banner.t > 2.3 ? (3 - G.banner.t) / 0.7 : 1; ctx.globalAlpha = Math.max(0, a);
+  if (G.banner && G.banner.t < 3) { const a = G.banner.t < 0.3 ? G.banner.t / 0.3 : G.banner.t > 2.3 ? (3 - G.banner.t) / 0.7 : 1; ctx.globalAlpha = Math.max(0, a) * 0.5; // v29.5: see-through banner
     ctx.fillStyle = IVORY(0.95); ctx.font = `800 ${38 * u}px "Rivalcore Brand", -apple-system, "SF Pro Display", BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`; ctx.save(); ctx.shadowColor = 'rgba(255,140,70,0.6)'; ctx.shadowBlur = 18 * u; ctx.fillText(G.banner.text.toUpperCase(), W / 2, H * 0.3); ctx.restore();
     const hint = G.firstDuel ? 'Training duel - an easy opponent while you learn' : ({ favoured: 'In tests your beast usually wins this one', underdog: 'In tests your beast usually loses this one', even: 'In tests this one is close', mirror: 'Mirror match' }[G.banner.sub] || '');
     ctx.font = `500 ${12 * u}px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`; ctx.fillStyle = 'rgba(239,230,214,0.7)'; ctx.fillText(G.human[0] ? hint.toUpperCase() : 'COMPUTER VS COMPUTER', W / 2, H * 0.3 + 28 * u); ctx.globalAlpha = 1; }
@@ -4032,21 +4033,23 @@ function drawTouch() { if (!touchOn() || !G.st || G.mode !== 'fight') return; co
   const side = S.FLEET.coral.includes(s.type) ? 'coral' : 'abyssal'; const tc = side === 'coral' ? [255, 150, 80] : [120, 150, 255]; const t = G.st.t;
   // joystick: floating under the thumb, a faint resting ring otherwise
   const st = T.stick, on = st.id !== null; const ox = on ? st.ox : Lo.rest.x, oy = on ? st.oy : Lo.rest.y;
-  if (!ctlDraw(ctlImg('ring', side), ox, oy, Lo.stickR * 2.3, on ? 0.75 : 0.32)) { ctx.strokeStyle = `rgba(239,230,214,${on ? 0.35 : 0.16})`; ctx.lineWidth = 1.5 * k; ctx.beginPath(); ctx.arc(ox, oy, Lo.stickR, 0, TAU); ctx.stroke(); }
+  if (!ctlDraw(ctlImg('ring', side), ox, oy, Lo.stickR * 2.3, on ? 0.42 : 0.3)) { ctx.strokeStyle = `rgba(239,230,214,${on ? 0.35 : 0.16})`; ctx.lineWidth = 1.5 * k; ctx.beginPath(); ctx.arc(ox, oy, Lo.stickR, 0, TAU); ctx.stroke(); }
   const kx = on ? ox + Math.cos(st.ang) * st.mag * Lo.stickR : ox, ky = on ? oy + Math.sin(st.ang) * st.mag * Lo.stickR : oy;
-  if (!ctlDraw(ctlImg('knob', side), kx, ky, 58 * k * (on ? 1.06 : 1), on ? 0.9 : 0.45)) { ctx.fillStyle = 'rgba(239,230,214,0.32)'; ctx.beginPath(); ctx.arc(kx, ky, 24 * k, 0, TAU); ctx.fill(); }
+  if (!ctlDraw(ctlImg('knob', side), kx, ky, 58 * k * (on ? 1.06 : 1), on ? 0.6 : 0.42)) { ctx.fillStyle = 'rgba(239,230,214,0.32)'; ctx.beginPath(); ctx.arc(kx, ky, 24 * k, 0, TAU); ctx.fill(); }
   // fire
-  const F = Lo.fire, fp = T.fire !== null; if (!ctlDraw(ctlImg('fire', side), F.x, F.y, F.r * 2.3 * (fp ? 0.93 : 1), fp ? 1 : 0.6)) { ctx.fillStyle = fp ? 'rgba(239,230,214,0.35)' : 'rgba(239,230,214,0.12)'; ctx.beginPath(); ctx.arc(F.x, F.y, F.r, 0, TAU); ctx.fill(); }
+  const F = Lo.fire, fp = T.fire !== null; if (!ctlDraw(ctlImg('fire', side), F.x, F.y, F.r * 2.3 * (fp ? 0.93 : 1), fp ? 0.75 : 0.5)) { ctx.fillStyle = fp ? 'rgba(239,230,214,0.35)' : 'rgba(239,230,214,0.12)'; ctx.beginPath(); ctx.arc(F.x, F.y, F.r, 0, TAU); ctx.fill(); }
   // special: dim while it charges (a team-coloured ring fills around it), bright and slowly turning when ready
   const P = Lo.special; const ch = G.vis[G.me || 0].charge || { frac: 0, ready: false, active: false }; const pul = ch.ready ? 0.5 + 0.5 * Math.sin(t * 5) : 0; const sp = T.special !== null;
   if (ch.ready) { ctx.save(); ctx.globalAlpha = 0.35 + 0.25 * pul; const gr = ctx.createRadialGradient(P.x, P.y, P.r * 0.5, P.x, P.y, P.r * 1.5); gr.addColorStop(0, rgba(tc, 0.5)); gr.addColorStop(1, rgba(tc, 0)); ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(P.x, P.y, P.r * 1.5, 0, TAU); ctx.fill(); ctx.restore(); }
-  ctlDraw(ctlImg('special', side), P.x, P.y, P.r * 2.3 * (sp ? 0.93 : 1 + 0.03 * pul), ch.ready ? 1 : ch.active ? 0.8 : 0.38, ch.ready ? -t * 0.6 : 0);
+  ctlDraw(ctlImg('special', side), P.x, P.y, P.r * 2.3 * (sp ? 0.93 : 1 + 0.03 * pul), ch.ready ? 0.8 : ch.active ? 0.6 : 0.3, ch.ready ? -t * 0.6 : 0);
   const fr = ch.active ? 1 : ch.frac; ctx.strokeStyle = 'rgba(239,230,214,0.12)'; ctx.lineWidth = 5 * k; ctx.beginPath(); ctx.arc(P.x, P.y, P.r + 9 * k, 0, TAU); ctx.stroke();
   if (!ch.ready) { ctx.strokeStyle = rgba(tc, ch.active ? 0.5 : 0.85); ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(P.x, P.y, P.r + 9 * k, -Math.PI / 2, -Math.PI / 2 + TAU * fr); ctx.stroke(); }
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   // back (Lumen Ray only)
-  if (G.types[0] === 'lr') { const Bk = Lo.back; if (!ctlDraw(ctlImg('ring', side), Bk.x, Bk.y, Bk.r * 2.4 * (T.back !== null ? 0.93 : 1), T.back !== null ? 0.95 : 0.5)) { ctx.strokeStyle = 'rgba(239,230,214,0.45)'; ctx.lineWidth = 1.5 * k; ctx.beginPath(); ctx.arc(Bk.x, Bk.y, Bk.r, 0, TAU); ctx.stroke(); }
-    ctx.fillStyle = 'rgba(255,244,228,0.9)'; ctx.font = `800 ${11 * k}px "Rivalcore Brand", -apple-system, system-ui, sans-serif`; ctx.fillText('BACK', Bk.x, Bk.y); }
+  if (G.types[0] === 'lr') { const Bk = Lo.back; if (!ctlDraw(ctlImg('ring', side), Bk.x, Bk.y, Bk.r * 2.4 * (T.back !== null ? 0.93 : 1), T.back !== null ? 0.7 : 0.4)) { ctx.strokeStyle = 'rgba(239,230,214,0.45)'; ctx.lineWidth = 1.5 * k; ctx.beginPath(); ctx.arc(Bk.x, Bk.y, Bk.r, 0, TAU); ctx.stroke(); }
+    ctx.save(); ctx.translate(Bk.x, Bk.y); ctx.strokeStyle = rgba(tc, T.back !== null ? 0.95 : 0.6); ctx.lineWidth = 3 * k; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; const q = Bk.r * 0.32; // reverse: two chevrons pointing back, under a small beast arrow
+      for (const dy of [-q * 0.15, q * 0.55]) { ctx.beginPath(); ctx.moveTo(-q, dy - q * 0.5); ctx.lineTo(0, dy + q * 0.15); ctx.lineTo(q, dy - q * 0.5); ctx.stroke(); }
+      ctx.fillStyle = rgba(tc, T.back !== null ? 0.95 : 0.6); ctx.beginPath(); ctx.moveTo(0, -q * 1.45); ctx.lineTo(q * 0.42, -q * 0.75); ctx.lineTo(-q * 0.42, -q * 0.75); ctx.closePath(); ctx.fill(); ctx.restore(); }
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.lineCap = 'butt'; }
 function checkPortrait() { const p = touchOn() && (G.mode === 'fight') && window.innerHeight > window.innerWidth; if (p !== G.portrait) { G.portrait = p; const el = document.getElementById('rotate'); if (el) el.hidden = !p; } }
 
