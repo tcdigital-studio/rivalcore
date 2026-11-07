@@ -374,11 +374,28 @@ kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
 .keyshud.big { bottom: auto; top: 58%; } .keyshud.big kbd.kc { min-width: 38px; height: 38px; font-size: 15px; } .keyshud.big kbd.kc.wide { min-width: 120px; } .keyshud.big kbd.kc.mid { min-width: 64px; }
 .h-foot #h-keys { display: inline-flex; vertical-align: middle; } .h-foot .keys-p { padding: 4px 10px; gap: 10px; background: none; border: 0; } .h-foot kbd.kc { min-width: 22px; height: 22px; font-size: 11px; padding: 0 5px; border-radius: 5px; box-shadow: 0 2px 0 #0a0d1e; } .h-foot kbd.kc.wide { min-width: 60px; } .h-foot kbd.kc.mid { min-width: 38px; } .h-foot .kg > i { font-size: 9px; } .h-foot .kpad { gap: 2px; } .h-foot .kpad span { gap: 2px; }
 @media (max-width: 900px), (max-height: 600px) { #keysline { display: none !important; } }
+
+/* v29.3 look closer */
+.zoom { position: fixed; inset: 0; z-index: 40; background: radial-gradient(ellipse at 50% 45%, rgba(30,70,100,0.55), rgba(4,6,18,0.97) 70%), #050817; animation: zmIn 220ms ease-out; } .zoom[hidden] { display: none; } @keyframes zmIn { from { opacity: 0; } }
+#zm-cv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; } #zm-cv:active { cursor: grabbing; }
+.zm-top { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: space-between; align-items: center; padding: max(14px, env(safe-area-inset-top)) 20px 0; pointer-events: none; } .zm-top b { font-size: 26px; margin-right: 10px; } .zm-top span { color: var(--mute); font-size: 15px; }
+.zm-x, .zm-nav, .zm-bar button { pointer-events: auto; display: grid; place-items: center; border-radius: 50%; color: #fff3df; background: rgba(255,248,235,0.1); border: 1px solid rgba(255,248,235,0.22); cursor: pointer; font: 600 20px/1 var(--body, system-ui), sans-serif; }
+.zm-x { width: 44px; height: 44px; } .zm-nav { position: absolute; top: 50%; left: 16px; width: 52px; height: 52px; transform: translateY(-50%); font-size: 30px; } .zm-nav.r { left: auto; right: 16px; } .zm-nav[hidden] { display: none; }
+.zm-bar { position: absolute; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); display: flex; align-items: center; gap: 14px; padding: 6px; border-radius: 999px; background: rgba(8,12,30,0.7); border: 1px solid rgba(255,248,235,0.12); } .zm-bar span { font-size: 13px; color: var(--mute); white-space: nowrap; } .zm-bar button { width: 40px; height: 40px; font-size: 22px; }
+.dm-zoom { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,248,235,0.3); background: rgba(255,248,235,0.06); color: #fff3df; cursor: pointer; padding: 0; margin-left: 4px; }
+.res-look { display: flex; gap: 10px; justify-content: center; align-items: center; margin: 4px 0 2px; } .res-look .lab { margin: 0; } .res-look button { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 999px; background: rgba(255,248,235,0.06); border: 1px solid rgba(255,248,235,0.18); color: inherit; cursor: pointer; font: 600 14px var(--body, system-ui), sans-serif; } .res-look canvas { width: 72px; height: 44px; border-radius: 999px; background: rgba(6,10,26,0.8); }
+@media (max-height: 520px) { .zm-top b { font-size: 20px; } .zm-bar span { display: none; } }
 </style>
 </head>
 <body>
 <canvas id="game" aria-label="Rivalcore playfield"></canvas>
 <div class="keyshud" id="keyshud" hidden></div>
+<div class="zoom" id="zoom" hidden role="dialog" aria-label="Look closer">
+  <canvas id="zm-cv"></canvas>
+  <div class="zm-top"><div><b id="zm-name"></b><span id="zm-role"></span></div><button type="button" class="zm-x" id="zm-x" aria-label="Close">✕</button></div>
+  <button type="button" class="zm-nav" id="zm-prev" aria-label="Previous beast">‹</button><button type="button" class="zm-nav r" id="zm-next" aria-label="Next beast">›</button>
+  <div class="zm-bar"><button type="button" id="zm-out" aria-label="Zoom out">−</button><span>Pinch or scroll to zoom · drag to look around</span><button type="button" id="zm-in" aria-label="Zoom in">+</button></div>
+</div>
 
 <div class="ov" id="home">
   <div class="home">
@@ -399,7 +416,7 @@ kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
       <button type="button" class="link" id="setbtn">Settings</button>
       <button type="button" class="link" id="newsbtn">What's new</button>
     </div>
-    <footer class="h-foot">Playtest v29.2 · Keyboard, gamepad or touch · <span id="h-keys"></span></footer>
+    <footer class="h-foot">Playtest v29.3 · Keyboard, gamepad or touch<span id="h-keys"></span></footer>
   </div>
 </div>
 
@@ -451,6 +468,7 @@ kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-t">
     <h2 id="news-t">What's new</h2>
     <ul class="news-l">
+      <li><b>v29.3</b> Look closer: tap the magnifier under any clip, the clip itself, or the beasts on the result screen to see the beast full screen in its original detail - pinch or scroll to zoom, drag to look around. The keyboard guide now shows only before your first fight, in your first two fights, on the pause screen, and for 2-player games.</li>
       <li><b>v29.2</b> Fixed: on touch screens the steering stick could freeze (if a duel ended while your thumb was on it, the beast kept flying straight in the next duel). Pack Battle and Reef War now have their own difficulty choice. On a computer, the keys are shown as keycaps on the Duel screen, for the first seconds of each fight and on the pause screen (P).</li>
       <li><b>v29.1</b> Quieter map: no bubbles or pulsing light; now and then a wreck glints and the lantern stalks and dock kelp sway a little. Balance: Spore Matron, Lurefang, Isopod Warden and Ink Revenant get 5% more health (the Abyssal pack was winning 43% of pack battles, now about 49%); the Leviathan Ray's beam hits a little harder to make up for its bursts.</li>
       <li><b>v29</b> Ships are now beasts and fleets are packs. Reef War: battles show a forecast you can accept or fight yourself; reefs pay only while linked to home; heal with pearls; new beasts cost more as the pack grows; wrecks give 6 pearls once; tap any reef to read what it does; a hands-on tutorial; a living map. Fixes: the white circle and floating icons on the map, and a war that would not end when a pack was wiped out. The Leviathan Ray's beam now follows its nose. Tap MAIN or SPECIAL under a clip to see it.</li>
@@ -510,6 +528,7 @@ kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
   <div class="res">
     <h2 id="res-title">Victory</h2>
     <p id="res-sub"></p>
+    <div class="res-look" id="res-look"></div>
     <div class="bar">
       <button type="button" class="btn" id="rematch">Rematch (R)</button>
       <button type="button" class="btn ghost" id="next">Next matchup (N)</button>
@@ -2984,7 +3003,7 @@ function startMatch(t0, t1, opts) {
   if (opts.net) { G.pvp = false; G.me = G.net.me; G.human = [G.me === 0, G.me === 1]; G.firstDuel = false; } else { G.me = 0; G.net = null; } // v27 online: this device flies ship G.me
   { const dd = G.firstDuel ? 'beginner' : G.diff === 'pvp' ? 'normal' : G.diff; G.ai = [S.makeAI(dd, G.seed * 3 + 1), S.makeAI(dd, G.seed * 7 + 2)]; }
   G.vis = G.st.ships.map((s) => ({ rig: makePlayer(s.type), bank: 0, lastA: s.a, flashT: 0, dead: false, deathT: 0, ready: false, readyFlash: 0 }));
-  G.fx = []; G.trails = new Map(); G.deaths = []; G.over = 0; G.acc = 0; G.freeze = 0; G.slow = 0; G.logged = false; G.banner2 = null; touchReset(); G.mode = 'fight'; G.paused = false; G.banner = { t: 0, text: SHIPS[t0].name + '  vs  ' + SHIPS[t1].name, sub: S.matchup(t0, t1) };
+  G.fx = []; G.trails = new Map(); G.deaths = []; G.over = 0; G.acc = 0; G.freeze = 0; G.slow = 0; G.logged = false; G.banner2 = null; touchReset(); try { if (!touchOn()) localStorage.setItem('duelArena.kbFights', String(kbFights() + 1)); } catch (e) {} G.mode = 'fight'; G.paused = false; G.banner = { t: 0, text: SHIPS[t0].name + '  vs  ' + SHIPS[t1].name, sub: S.matchup(t0, t1) };
   const [a, b] = G.st.ships; const d = S.rel(a, b); cam.x = S.wrapP(a.x + d[0] / 2, ARENA.w); cam.y = S.wrapP(a.y + d[1] / 2, ARENA.h); cam.z = targetZoom(); cam.shake = 0;
   hideOverlay();
   if (!G.net && G.human[0] && TIPS[t0] && !seenShip(t0)) { G.coach = { used: false, readyShown: false, msg: null }; showCard(t0); } // v13: first time with this ship
@@ -3886,13 +3905,14 @@ const kc = (k, w) => `<kbd class="kc${w ? ' ' + w : ''}">${k}</kbd>`;
 function keysHtml(o) { o = o || {}; const p2 = o.p2;
   const fly = p2 ? `<div class="kpad">${kc('↑')}<span>${kc('←')}${kc('↓')}${kc('→')}</span></div>` : `<div class="kpad">${kc('W')}<span>${kc('A')}${kc('S')}${kc('D')}</span></div>`;
   return `<div class="keys-p${o.cls ? ' ' + o.cls : ''}">${o.who ? `<b class="kwho">${o.who}</b>` : ''}<div class="kg">${fly}<i>Fly${p2 || o.noAlt ? '' : ' <em>or arrows</em>'}</i></div><div class="kg">${p2 ? kc('/') : kc('Space', 'wide')}<i>Fire</i></div><div class="kg">${p2 ? kc('.') : kc('Shift', 'mid')}<i>Special</i></div>${o.pause ? `<div class="kg">${kc('P')}<i>Pause</i></div><div class="kg">${kc('Esc', 'mid')}<i>Menu</i></div>` : ''}</div>`; }
-function homeKeys() { const el = $('h-keys'); if (el) el.innerHTML = touchOn() ? 'Touch: steer with your left thumb, fire and special on the right' : keysHtml({ pause: false }); }
-function updateKeysLine() { const el = $('keysline'); if (!el) return; const t = $('touchline'); if (t) t.hidden = !touchOn(); el.hidden = touchOn() || G.online;
+function homeKeys() { const el = $('h-keys'); if (el) el.textContent = ''; } // v29.3: the keys are standard - shown only where a new player needs them
+const kbFights = () => { try { return +localStorage.getItem('duelArena.kbFights') || 0; } catch (e) { return 9; } };
+function updateKeysLine() { const el = $('keysline'); if (!el) return; const t = $('touchline'); if (t) t.hidden = !touchOn(); el.hidden = touchOn() || G.online || (G.diff !== 'pvp' && kbFights() > 0); // keys on the Duel screen: before your first fight, and always for 2 players (player 2's keys are not standard)
   if (!el.hidden) { const pvp = G.diff === 'pvp'; const h = pvp ? keysHtml({ who: 'Player 1', cls: 'p1', noAlt: true }) + keysHtml({ who: 'Player 2', cls: 'p2', p2: true }) : keysHtml({ pause: true }); if (el.dataset.h !== h) { el.innerHTML = h; el.dataset.h = h; } } }
-function keysHud() { const el = $('keyshud'); if (!el) return; const show = !touchOn() && G.mode === 'fight' && G.st && !G.card && (G.paused || (G.st.t < 8 && G.human[G.me || 0]));
+function keysHud() { const el = $('keyshud'); if (!el) return; const show = !touchOn() && G.mode === 'fight' && G.st && !G.card && (G.paused || (G.st.t < 8 && G.human[G.me || 0] && (kbFights() <= 2 || (G.human[0] && G.human[1] && kbFights() <= 4)))); // in a fight: the first two fights only, and on pause
   if (!show) { if (!el.hidden) el.hidden = true; return; } const pvp = G.human[0] && G.human[1]; const big = !!G.paused; const h = (pvp ? keysHtml({ who: 'P1', noAlt: true }) + keysHtml({ who: 'P2', p2: true }) : keysHtml({ pause: true })) + (big ? '' : '');
   if (el.dataset.h !== h) { el.innerHTML = h; el.dataset.h = h; } el.classList.toggle('big', big); el.hidden = false; el.style.opacity = big ? 1 : Math.max(0, Math.min(1, (8 - G.st.t) / 1.2)); }
-const portraits = {}; function animatePortraits(dt) { if (G.mode !== 'select' && G.mode !== 'home' && G.mode !== 'fleetsel' && G.mode !== 'between' && G.mode !== 'reef' && G.mode !== 'codex') return; document.querySelectorAll('canvas.port').forEach((c) => { const k = c.dataset.k; const p = portraits[k] || (portraits[k] = makePlayer(k)); p.update(dt, [0, 0], 0);
+const portraits = {}; function animatePortraits(dt) { if (G.mode !== 'select' && G.mode !== 'home' && G.mode !== 'fleetsel' && G.mode !== 'between' && G.mode !== 'reef' && G.mode !== 'codex' && G.mode !== 'over') return; document.querySelectorAll('canvas.port').forEach((c) => { const k = c.dataset.k; const p = portraits[k] || (portraits[k] = makePlayer(k)); p.update(dt, [0, 0], 0);
   p.render(fxDraw); const g = c.getContext('2d'); g.clearRect(0, 0, c.width, c.height); const bb = portBox(k, p); // v28: fit the ship's real outline (antennae, tails) inside the card
     const sc = Math.min(c.width * 0.9 / bb.w, c.height * 0.84 / bb.h); g.save(); g.translate(c.width / 2, c.height / 2); g.scale(sc, sc); g.drawImage(p.can, -bb.cx, -bb.cy); g.restore(); }); }
 const PBOX = {}; function portBox(k, p) { const b = PBOX[k]; if (b && b.n >= 4) return b;
@@ -3926,6 +3946,7 @@ function showResult() { const w = G.st.winner; const ws = G.st.ships[w]; const m
   $('res-title').textContent = G.pvp ? (ws ? (w === 0 ? 'Player 1 wins' : 'Player 2 wins') : 'Draw') : G.human[me] ? (youWon ? 'Victory' : ws ? 'Defeat' : 'Draw') : SHIPS[ws.type].name + ' wins';
   if (ws) $('res-sub').textContent = `${SHIPS[ws.type].name} won in ${Math.round(G.st.t)} s with ${Math.round(100 * ws.hull / SHIPS[ws.type].hull)}% health left. In tests, ${SHIPS[G.types[0]].name} is ${S.matchup(G.types[0], G.types[1])} here.`;
   if (G.net) netResultUI(); else { $('next').hidden = false; $('copylog2').hidden = false; $('rematch').textContent = 'Rematch (R)'; $('back').textContent = 'Beasts (Esc)'; }
+  { const L = $('res-look'), ks = [G.types[0], G.types[1]].filter((k) => SHIPS[k]); L.innerHTML = `<span class="lab">Look closer</span>` + ks.map((k, i) => `<button type="button" data-i="${i}"><canvas class="port" width="144" height="88" data-k="${k}"></canvas>${SHIPS[k].name}</button>`).join(''); L.querySelectorAll('button').forEach((b) => { b.onclick = () => zoomOpen(ks, +b.dataset.i); }); }
   $('result').hidden = false; $('logmsg2').textContent = ''; }
 
 /* ---------------- match log (this browser only) ---------------- */
@@ -4136,7 +4157,7 @@ window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; }
 /* ---------------- loop ---------------- */
 const capture = { on: false };
 let last = 0;
-function frame(ts) { if (capture.on) return; requestAnimationFrame(frame); const dt = Math.min(0.05, last ? (ts - last) / 1000 : 1 / 60); last = ts; try { padPause(); checkPortrait(); if ((G.mode === 'select' || G.mode === 'home') || G.mode === 'fleetsel' || G.mode === 'between' || G.mode === 'reef' || G.mode === 'codex') animatePortraits(dt); tick(dt); render(); try { keysHud(); if (G.mode === 'select') updateKeysLine(); if (G.mode === 'home' && !homeKeys.done) { homeKeys(); homeKeys.done = true; } } catch (e) {} demoFrame(dt); } catch (err) { console.error(err); } }
+function frame(ts) { if (capture.on) return; requestAnimationFrame(frame); const dt = Math.min(0.05, last ? (ts - last) / 1000 : 1 / 60); last = ts; try { padPause(); checkPortrait(); if ((G.mode === 'select' || G.mode === 'home') || G.mode === 'fleetsel' || G.mode === 'between' || G.mode === 'reef' || G.mode === 'codex' || (G.mode === 'over' && !$('result').hidden)) animatePortraits(dt); tick(dt); render(); try { zoomFrame(dt); keysHud(); if (G.mode === 'select') updateKeysLine(); if (G.mode === 'home' && !homeKeys.done) { homeKeys(); homeKeys.done = true; } } catch (e) {} demoFrame(dt); } catch (err) { console.error(err); } }
 // ===== Reef War (v16 prototype, 6 Nov 2026): two fleets of 4 on a sea map; take reefs for pearls, repairs and extra moves; every clash is a fleet battle =====
 const RW_N = [ // v20: sites and lanes follow the painted map (reefwar_map_concept_v01); game coordinates are 1600 x 900
   { id: 'h0', x: 152, y: 373, t: 'home', name: 'Coral Crown' },
@@ -4636,16 +4657,47 @@ const DEMO_SHORT = { lr: ['fast straight bolts', 'teleport away - your escape'],
   lv: ['short heavy beam, in bursts', 'drag the enemy into your beam'], lu: ['hold to charge, release to fire', 'mark the enemy - your shots home in'], sm: ['slow spore blob that chases', 'cloud that slows them and heals you'],
   wm: ['short, strong spit', 'speed burst with a burning trail'], iw: ['long thin beam', 'shed your shell: decoy husk + speed'], ir: ['shots forward and to the sides', 'an ink double draws their fire'] };
 // a preview block: the clip, two chips (tap one to see that part), a few words, and the full text on request
-function demoBlock(host, type, opts) { host.innerHTML = `<div class="dm"><div class="dm-nm"><b></b><span></span></div><canvas class="dm-cv"></canvas><div class="dm-rnd" hidden>?</div><div class="dm-cap"><button type="button" class="dm-c" data-p="0"><i>MAIN</i><b></b></button><button type="button" class="dm-c" data-p="1"><i>SPECIAL</i><b></b></button><button type="button" class="dm-more" aria-label="More about this beast">i</button></div><div class="dm-say"></div><div class="dm-long" hidden></div></div>`;
+function demoBlock(host, type, opts) { host.innerHTML = `<div class="dm"><div class="dm-nm"><b></b><span></span></div><canvas class="dm-cv"></canvas><div class="dm-rnd" hidden>?</div><div class="dm-cap"><button type="button" class="dm-c" data-p="0"><i>MAIN</i><b></b></button><button type="button" class="dm-c" data-p="1"><i>SPECIAL</i><b></b></button><button type="button" class="dm-more" aria-label="More about this beast">i</button><button type="button" class="dm-zoom" aria-label="Look closer"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15 15l5 5M10.5 7.8v5.4M7.8 10.5h5.4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div><div class="dm-say"></div><div class="dm-long" hidden></div></div>`;
   const cv2 = host.querySelector('canvas'); const caps = [...host.querySelectorAll('.dm-c')]; const say = host.querySelector('.dm-say'), long = host.querySelector('.dm-long'), more = host.querySelector('.dm-more');
   const nm = host.querySelector('.dm-nm b'), rl = host.querySelector('.dm-nm span'), rnd = host.querySelector('.dm-rnd'), cap = host.querySelector('.dm-cap');
   let ph = 0; const fill = (k) => { const ok = !!SHIPS[k]; cv2.hidden = !ok; rnd.hidden = ok; cap.style.visibility = ok ? '' : 'hidden'; nm.textContent = ok ? SHIPS[k].name : 'Random'; nm.style.color = ok ? `rgb(${ACC[k].join(',')})` : ''; rl.textContent = ok ? demoName(k, 0) : 'revealed when the duel starts';
     if (ok) { caps[0].querySelector('b').textContent = demoName(k, 1); caps[1].querySelector('b').textContent = demoName(k, 2); const sh = DEMO_SHORT[k] || ['', '']; say.textContent = sh[ph]; long.innerHTML = BLURB[k] ? `${BLURB[k][1]}<br>${BLURB[k][2]}` : ''; } else { say.textContent = ''; long.hidden = true; } };
   const v = demoView(cv2, type, Object.assign({}, opts, { cap: (p, k) => { ph = p; fill(k); caps.forEach((c, i) => c.classList.toggle('on', i === p)); } })); fill(type);
   caps.forEach((c, i) => { c.onclick = (e) => { e.stopPropagation(); try { sfx('ui'); } catch (x) {} demoNew(v); if (i === 1 && v.g) v.t = DEMO_MAIN - 0.01; }; });
+  host.querySelector('.dm-zoom').onclick = (e) => { e.stopPropagation(); if (SHIPS[v.type]) zoomOpen(opts && opts.list ? opts.list() : [v.type], opts && opts.list ? opts.list().indexOf(v.type) : 0); };
+  cv2.style.cursor = 'zoom-in'; cv2.onclick = (e) => { e.stopPropagation(); if (SHIPS[v.type]) zoomOpen([v.type], 0); };
   more.onclick = (e) => { e.stopPropagation(); long.hidden = !long.hidden; more.classList.toggle('on', !long.hidden); };
   v.set = (k) => { demoSet(v, k); fill(k); }; return v; }
 setTimeout(() => Object.assign(window.GAME || (window.GAME = {}), { touchState: () => ({ id: TOUCH.stick.id, mag: +TOUCH.stick.mag.toFixed(2), live: [...TOUCH.live], mode: G.mode }), demoTimes: () => DEMO.views.map((v) => +v.t.toFixed(2)), demoBlock, demoErr: () => DEMO.err && String(DEMO.err.stack || DEMO.err) }), 0);
+
+/* ---------------- v29.3: look closer ----------------
+   A full-screen viewer for one beast, drawn from the original art at its native resolution (several times sharper than in a fight).
+   Pinch, wheel or the +/- buttons zoom; drag pans; double-tap resets; arrows step through the beasts on offer. */
+const ZV = { on: false, list: [], i: 0, p: null, z: 1, x: 0, y: 0, t: 0 };
+function bigPlayer(k) { if (!RIGS[k]) return makePlayer(k); const rig = RIGS[k]; const p = new RigPlayer(rig); const res = Math.min(1 / rig.upp, 2400 / (rig.extent * 2)); const S = Math.ceil(rig.extent * 2 * res);
+  const mk = (w, h) => { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; }; p.S = S; p.can = mk(S, S); p.ctx = p.can.getContext("2d"); p.layer = mk(S, S); p.lctx = p.layer.getContext('2d'); p.k = res * rig.upp;
+  p.base0 = new DOMMatrix().translate(S / 2, S / 2).scale(p.k, p.k).translate(-rig.origin[0], -rig.origin[1]); p.baseM = p.base0; return p; }
+function zoomOpen(list, i) { list = (list || []).filter((k) => SHIPS[k]); if (!list.length) return; ZV.list = list; ZV.i = Math.max(0, Math.min(list.length - 1, i || 0)); ZV.on = true; ZV.prevPaused = G.paused; if (G.mode === 'fight') G.paused = true;
+  $('zoom').hidden = false; zoomSet(); try { sfx('ui'); } catch (e) {} }
+function zoomSet() { const k = ZV.list[ZV.i]; ZV.p = bigPlayer(k); ZV.z = 1; ZV.x = 0; ZV.y = 0; const n = $('zm-name'); n.textContent = SHIPS[k].name; n.style.color = `rgb(${ACC[k].join(',')})`; $('zm-role').textContent = demoName(k, 0);
+  $('zm-prev').hidden = $('zm-next').hidden = ZV.list.length < 2; }
+function zoomClose() { if (!ZV.on) return; ZV.on = false; $('zoom').hidden = true; ZV.p = null; if (G.mode === 'fight') G.paused = !!ZV.prevPaused; }
+function zoomFrame(dt) { if (!ZV.on || !ZV.p) return; const cvz = $('zm-cv'), r = cvz.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr); if (cvz.width !== w || cvz.height !== h) { cvz.width = w; cvz.height = h; }
+  const p = ZV.p; p.update(dt, [0, 0], 0); p.render(fxDraw); let b; try { b = portBox('zoom-' + ZV.list[ZV.i] + p.S, p); } catch (e) { b = { w: p.S, h: p.S, cx: p.S / 2, cy: p.S / 2 }; }
+  const g = cvz.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, w, h); const fit = Math.min(w * 0.86 / b.w, h * 0.78 / b.h);
+  g.translate(w / 2 + ZV.x * dpr, h / 2 + ZV.y * dpr); g.scale(fit * ZV.z, fit * ZV.z); g.imageSmoothingQuality = 'high'; g.drawImage(p.can, -b.cx, -b.cy); }
+function zoomBy(f, cx, cy) { const z0 = ZV.z, z1 = Math.max(1, Math.min(6, z0 * f)); const r = $('zm-cv').getBoundingClientRect(); const px = (cx === undefined ? r.width / 2 : cx - r.left) - r.width / 2, py = (cy === undefined ? r.height / 2 : cy - r.top) - r.height / 2;
+  ZV.x = px - (px - ZV.x) * (z1 / z0); ZV.y = py - (py - ZV.y) * (z1 / z0); ZV.z = z1; if (z1 === 1) { ZV.x = 0; ZV.y = 0; } }
+(function zoomWire() { const el = $('zoom'); if (!el) return; const cvz = $('zm-cv'); const pts = new Map(); let pinch = null, lastTap = 0;
+  $('zm-x').onclick = zoomClose; $('zm-in').onclick = () => zoomBy(1.5); $('zm-out').onclick = () => zoomBy(1 / 1.5);
+  $('zm-prev').onclick = () => { ZV.i = (ZV.i + ZV.list.length - 1) % ZV.list.length; zoomSet(); }; $('zm-next').onclick = () => { ZV.i = (ZV.i + 1) % ZV.list.length; zoomSet(); };
+  cvz.addEventListener('wheel', (e) => { e.preventDefault(); zoomBy(Math.exp(-e.deltaY * 0.0022), e.clientX, e.clientY); }, { passive: false });
+  cvz.addEventListener('pointerdown', (e) => { cvz.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); const now = performance.now(); if (pts.size === 1 && now - lastTap < 300) { if (ZV.z > 1.05) { ZV.z = 1; ZV.x = 0; ZV.y = 0; } else zoomBy(2.5, e.clientX, e.clientY); } lastTap = now; if (pts.size === 2) { const [a, b2] = [...pts.values()]; pinch = { d: Math.hypot(a.x - b2.x, a.y - b2.y) }; } });
+  cvz.addEventListener('pointermove', (e) => { const q = pts.get(e.pointerId); if (!q) return; const nx = e.clientX, ny = e.clientY;
+    if (pts.size === 2 && pinch) { q.x = nx; q.y = ny; const [a, b2] = [...pts.values()]; const d = Math.hypot(a.x - b2.x, a.y - b2.y); if (pinch.d > 0) zoomBy(d / pinch.d, (a.x + b2.x) / 2, (a.y + b2.y) / 2); pinch.d = d; return; }
+    if (ZV.z > 1) { ZV.x += nx - q.x; ZV.y += ny - q.y; } q.x = nx; q.y = ny; });
+  const up = (e) => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; }; ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => cvz.addEventListener(t, up));
+  window.addEventListener('keydown', (e) => { if (!ZV.on) return; if (e.code === 'Escape') { e.stopImmediatePropagation(); e.preventDefault(); zoomClose(); } else if (e.code === 'ArrowRight') $('zm-next').click(); else if (e.code === 'ArrowLeft') $('zm-prev').click(); else if (e.key === '+' || e.key === '=') zoomBy(1.5); else if (e.key === '-') zoomBy(1 / 1.5); }, true); })();
 
 function boot() { loadOpt(); resize(); buildSelect(); logCount(); homeWire(); G.mode = 'home'; try { $('rwcont').hidden = !rwSaved(); } catch (e) {} requestAnimationFrame(frame); }
 window.GAME = { debugKill(i) { const s = G.st.ships[i]; if (!s.alive) return; s.hull = 0; s.alive = false; s.deathT = G.st.t; G.st.over = true; G.st.winner = 1 - i; G.st.endT = G.st.t; handleEvents([{ type: 'death', ship: i, x: s.x, y: s.y }]); }, readLog, caption(txt) { ctx.setTransform(1, 0, 0, 1, 0, 0); const u = DPR; ctx.font = `500 ${13 * u}px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`; ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(239,230,214,0.85)'; ctx.fillText(txt, 22 * u, H - 40 * u); ctx.fillStyle = 'rgba(239,230,214,0.4)'; ctx.fillRect(22 * u, H - 58 * u, 26 * u, 1.5 * u); }, G, cam, startMatch, tick, render, resize, capture, showSelect, nextMatchup, sel, keys, audio: AU, audioInit, musicFor, TOUCH, OPT, touchLayout, saveOpt, buildSelect };
