@@ -360,10 +360,25 @@ h1, h2, h3 { font-family: var(--display); }
 @media (max-width: 640px) { .fl-hero { flex-direction: column; align-items: center; } }
 .dm:has(.dm-long:not([hidden])) .dm-say { display: none; } .slot .dm:has(.dm-long:not([hidden])) .dm-cv { height: clamp(100px, 25vh, 250px); }
 @media (max-height: 520px) and (orientation: landscape) { #fleet.reef #fl-det { display: none; } .dm:has(.dm-long:not([hidden])) .dm-cv { display: none; } .dm-long { font-size: 12px; } }
+@media (max-height: 520px) and (orientation: landscape) { #fleet .s-sub { display: none; } #fleet:not(.reef) #fl-det .dm-cv, #fleet:not(.reef) #fl-det .dm-rnd { height: 15vh; } #fleet #fl-det .dm-nm { display: none; } #fleet .wrap { gap: 6px; } }
+
+/* v29.2 keyboard keycaps */
+kbd.kc { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 7px; box-sizing: border-box; border-radius: 7px; font: 700 13px/1 var(--body, system-ui), sans-serif; color: #fff3df; background: linear-gradient(180deg, #2c3252, #191d36); border: 1px solid rgba(255,248,235,0.22); box-shadow: 0 3px 0 #0a0d1e, inset 0 1px 0 rgba(255,255,255,0.14); }
+kbd.kc.wide { min-width: 96px; } kbd.kc.mid { min-width: 52px; }
+.keys-p { display: inline-flex; align-items: flex-end; gap: 18px; padding: 10px 18px 8px; border-radius: 16px; background: rgba(10,14,36,0.72); border: 1px solid rgba(255,248,235,0.12); }
+.kg { display: grid; justify-items: center; gap: 6px; } .kg > i { font-style: normal; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); white-space: nowrap; } .kg > i em { font-style: normal; letter-spacing: 0.02em; text-transform: none; opacity: 0.75; }
+.kpad { display: grid; justify-items: center; gap: 4px; } .kpad span { display: flex; gap: 4px; }
+.kwho { align-self: center; white-space: nowrap; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #f2a65a; } .keys-p.p2 .kwho { color: #b9a6ff; }
+#keysline { flex: 1; display: flex; justify-content: center; gap: 12px; } #keysline[hidden] { display: none; } #keysline .keys-p { background: rgba(10,14,36,0.5); }
+.keyshud { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 5; display: flex; gap: 12px; pointer-events: none; transition: opacity 0.3s; } .keyshud[hidden] { display: none; }
+.keyshud.big { bottom: auto; top: 58%; } .keyshud.big kbd.kc { min-width: 38px; height: 38px; font-size: 15px; } .keyshud.big kbd.kc.wide { min-width: 120px; } .keyshud.big kbd.kc.mid { min-width: 64px; }
+.h-foot #h-keys { display: inline-flex; vertical-align: middle; } .h-foot .keys-p { padding: 4px 10px; gap: 10px; background: none; border: 0; } .h-foot kbd.kc { min-width: 22px; height: 22px; font-size: 11px; padding: 0 5px; border-radius: 5px; box-shadow: 0 2px 0 #0a0d1e; } .h-foot kbd.kc.wide { min-width: 60px; } .h-foot kbd.kc.mid { min-width: 38px; } .h-foot .kg > i { font-size: 9px; } .h-foot .kpad { gap: 2px; } .h-foot .kpad span { gap: 2px; }
+@media (max-width: 900px), (max-height: 600px) { #keysline { display: none !important; } }
 </style>
 </head>
 <body>
 <canvas id="game" aria-label="Rivalcore playfield"></canvas>
+<div class="keyshud" id="keyshud" hidden></div>
 
 <div class="ov" id="home">
   <div class="home">
@@ -384,7 +399,7 @@ h1, h2, h3 { font-family: var(--display); }
       <button type="button" class="link" id="setbtn">Settings</button>
       <button type="button" class="link" id="newsbtn">What's new</button>
     </div>
-    <footer class="h-foot">Playtest v29.1 · Keyboard, gamepad or touch · <span id="h-keys">Arrows or W A S D to fly, Space to fire, Shift for your special</span></footer>
+    <footer class="h-foot">Playtest v29.2 · Keyboard, gamepad or touch · <span id="h-keys"></span></footer>
   </div>
 </div>
 
@@ -436,6 +451,7 @@ h1, h2, h3 { font-family: var(--display); }
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-t">
     <h2 id="news-t">What's new</h2>
     <ul class="news-l">
+      <li><b>v29.2</b> Fixed: on touch screens the steering stick could freeze (if a duel ended while your thumb was on it, the beast kept flying straight in the next duel). Pack Battle and Reef War now have their own difficulty choice. On a computer, the keys are shown as keycaps on the Duel screen, for the first seconds of each fight and on the pause screen (P).</li>
       <li><b>v29.1</b> Quieter map: no bubbles or pulsing light; now and then a wreck glints and the lantern stalks and dock kelp sway a little. Balance: Spore Matron, Lurefang, Isopod Warden and Ink Revenant get 5% more health (the Abyssal pack was winning 43% of pack battles, now about 49%); the Leviathan Ray's beam hits a little harder to make up for its bursts.</li>
       <li><b>v29</b> Ships are now beasts and fleets are packs. Reef War: battles show a forecast you can accept or fight yourself; reefs pay only while linked to home; heal with pearls; new beasts cost more as the pack grows; wrecks give 6 pearls once; tap any reef to read what it does; a hands-on tutorial; a living map. Fixes: the white circle and floating icons on the map, and a war that would not end when a pack was wiped out. The Leviathan Ray's beam now follows its nose. Tap MAIN or SPECIAL under a clip to see it.</li>
       <li><b>v28</b> Every beast now shows itself: a short live clip of its main weapon and its special on the Duel, Pack Battle and Beast Guide screens. The Duel screen puts YOU against your RIVAL. Reef War: tap a reef for all its beasts, tap one beast to send only it; icons on the map; a picture tutorial. Thinner beams that come from the nose. Everything fits an iPad screen without scrolling.</li>
@@ -513,6 +529,7 @@ h1, h2, h3 { font-family: var(--display); }
     <div class="s-ctl">
       <div class="seg" role="group" aria-label="Your side" id="fl-side"><button type="button" data-v="coral" aria-pressed="true">Coral</button><button type="button" data-v="abyssal" aria-pressed="false">Abyssal</button></div>
       <div class="seg" role="group" aria-label="Fog of war" id="fl-fog" hidden><button type="button" data-v="on" aria-pressed="true">Fog of war</button><button type="button" data-v="off" aria-pressed="false">No fog</button></div>
+      <div class="seg" role="group" aria-label="Computer difficulty" id="fl-diff"><button type="button" data-v="beginner" aria-pressed="false">Beginner</button><button type="button" data-v="easy" aria-pressed="false">Easy</button><button type="button" data-v="normal" aria-pressed="true">Normal</button><button type="button" data-v="hard" aria-pressed="false">Hard</button></div>
       <div class="seg" role="group" aria-label="Pack size" id="fl-size"><button type="button" data-v="3" aria-pressed="false">3 beasts</button><button type="button" data-v="4" aria-pressed="true">4 beasts</button><button type="button" data-v="5" aria-pressed="false">5 beasts</button></div>
     </div>
     <section><div class="lab" id="fl-lab">Your pack</div><div class="row" id="fl-row"></div><div class="det" id="fl-det"></div></section>
@@ -2967,7 +2984,7 @@ function startMatch(t0, t1, opts) {
   if (opts.net) { G.pvp = false; G.me = G.net.me; G.human = [G.me === 0, G.me === 1]; G.firstDuel = false; } else { G.me = 0; G.net = null; } // v27 online: this device flies ship G.me
   { const dd = G.firstDuel ? 'beginner' : G.diff === 'pvp' ? 'normal' : G.diff; G.ai = [S.makeAI(dd, G.seed * 3 + 1), S.makeAI(dd, G.seed * 7 + 2)]; }
   G.vis = G.st.ships.map((s) => ({ rig: makePlayer(s.type), bank: 0, lastA: s.a, flashT: 0, dead: false, deathT: 0, ready: false, readyFlash: 0 }));
-  G.fx = []; G.trails = new Map(); G.deaths = []; G.over = 0; G.acc = 0; G.freeze = 0; G.slow = 0; G.logged = false; G.banner2 = null; G.mode = 'fight'; G.paused = false; G.banner = { t: 0, text: SHIPS[t0].name + '  vs  ' + SHIPS[t1].name, sub: S.matchup(t0, t1) };
+  G.fx = []; G.trails = new Map(); G.deaths = []; G.over = 0; G.acc = 0; G.freeze = 0; G.slow = 0; G.logged = false; G.banner2 = null; touchReset(); G.mode = 'fight'; G.paused = false; G.banner = { t: 0, text: SHIPS[t0].name + '  vs  ' + SHIPS[t1].name, sub: S.matchup(t0, t1) };
   const [a, b] = G.st.ships; const d = S.rel(a, b); cam.x = S.wrapP(a.x + d[0] / 2, ARENA.w); cam.y = S.wrapP(a.y + d[1] / 2, ARENA.h); cam.z = targetZoom(); cam.shake = 0;
   hideOverlay();
   if (!G.net && G.human[0] && TIPS[t0] && !seenShip(t0)) { G.coach = { used: false, readyShown: false, msg: null }; showCard(t0); } // v13: first time with this ship
@@ -3209,7 +3226,7 @@ function readHuman0(i) {
   const k = keys; if (G.pvp) { if (i === 0) return { thrust: !!k.KeyW, back: !!k.KeyS, turn: (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0), fire: !!(k.Space || k.KeyF), special: !!(k.ShiftLeft || k.KeyG) };
     return { thrust: !!k.ArrowUp, back: !!k.ArrowDown, turn: (k.ArrowRight ? 1 : 0) - (k.ArrowLeft ? 1 : 0), fire: !!(k.Slash || k.Numpad0 || k.KeyL), special: !!(k.Period || k.ShiftRight || k.Semicolon) }; }
   const inp = { thrust: !!(k.ArrowUp || k.KeyW), back: !!(k.ArrowDown || k.KeyS), turn: (k.ArrowRight || k.KeyD ? 1 : 0) - (k.ArrowLeft || k.KeyA ? 1 : 0), fire: !!(k.Space || k.KeyJ), special: !!(k.ShiftLeft || k.ShiftRight || k.KeyK) };
-  if (touchOn()) { const s = G.st.ships[G.me || 0]; const T = TOUCH;
+  if (touchOn()) { touchSweep(); const s = G.st.ships[G.me || 0]; const T = TOUCH;
     if (T.stick.id !== null && T.stick.mag > 0.12) { const d = SHIPS[s.type]; let turnRate = d.turn; if (s.curl > 0) turnRate *= d.special.turnMul || 1; if (s.cast > 0) turnRate *= SHIPS.lw.special.turnMul;
       const da = S.angDiff(T.stick.ang, s.a); inp.turn = Math.max(-1, Math.min(1, da / (turnRate * S.DT * 2.2))); if (T.stick.mag > 0.4) inp.thrust = true; }
     if (T.fire !== null) inp.fire = true; if (T.special !== null) inp.special = true; if (T.back !== null) inp.back = true; }
@@ -3764,7 +3781,7 @@ function drawHUD() {
   else hz = `NEBULA HEART ${G.st.heartWoke ? 'AWAKE · ' : ''}${hp.inhale ? 'INHALING' : 'EXHALING'}${hp.warn ? ' · SHIFTING' : ''}`;
   hz = String(hz || '').replace(/^MINES \d+ · /, '').replace(/NEXT RUN [0-9.]+s/, '').replace(/^ · /, '').trim(); // v25: only show hazard news that matters
   ctx.fillText(`${mm}:${String(ss).padStart(2, '0')}` + (hz ? `  ·  ${hz}` : ''), W / 2, H - 14 * u);
-  if (G.human[G.me || 0] && G.st.t < 12 && !touchOn()) ctx.fillText('← → turn   ↑ thrust   ' + (G.types[0] === 'lr' ? '↓ back   ' : '') + 'Space fire   Shift special   P pause', W / 2, H - 30 * u);
+  if (false) ctx.fillText('← → turn   ↑ thrust   ' + (G.types[0] === 'lr' ? '↓ back   ' : '') + 'Space fire   Shift special   P pause', W / 2, H - 30 * u);
   if (G.banner2 && G.banner2.t < 4) { const b = G.banner2; const a = b.t < 0.4 ? b.t / 0.4 : b.t > 3 ? (4 - b.t) : 1; ctx.globalAlpha = Math.max(0, a); ctx.fillStyle = 'rgba(255,170,140,0.95)'; ctx.font = `italic 700 ${26 * u}px -apple-system, "SF Pro Display", BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`; ctx.fillText(b.text, W / 2, H * 0.2); ctx.globalAlpha = 1; }
   if (G.net && G.net.stall > 0.4 && G.mode === 'fight') { ctx.fillStyle = 'rgba(8,10,28,0.45)'; ctx.fillRect(0, H * 0.42, W, H * 0.12); ctx.fillStyle = IVORY(0.95); ctx.font = `700 ${22 * u}px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('Waiting for your friend...', W / 2, H * 0.49); }
   if (G.paused && !G.card) { ctx.fillStyle = 'rgba(8,10,28,0.5)'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = IVORY(0.95); ctx.font = `700 ${36 * u}px -apple-system, "SF Pro Display", BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`; ctx.fillText('Paused', W / 2, H / 2); }
@@ -3864,7 +3881,17 @@ function markPicks() { [...$('row-you').children].forEach((c) => { const y = c.d
 function pickLab() { const el = $('pick-lab'); if (!el) return; const s = G.online ? 'you' : (G.pickSide || 'you'); el.innerHTML = G.online ? 'Tap a beast for <b class="you">YOU</b>' : `Tap a beast for <b class="${s === 'you' ? 'you' : 'rival'}">${s === 'you' ? 'YOU' : G.diff === 'pvp' ? 'PLAYER 2' : 'RIVAL'}</b> · tap the other box to choose for ${s === 'you' ? (G.diff === 'pvp' ? 'player 2' : 'the rival') : 'yourself'}`;
   const tg = $('tag-cpu'); if (tg) tg.textContent = G.online ? 'FRIEND' : G.diff === 'pvp' ? 'PLAYER 2' : 'RIVAL · ' + ({ beginner: 'BEGINNER', easy: 'EASY', normal: 'NORMAL', hard: 'HARD' }[G.diff] || 'CPU'); }
 function showDet(side) { const v = DV[side]; if (!v) return; const k = side === 'cpu' && G.online ? (NET.lobby && NET.lobby.rivalShip) || 'rnd' : sel[side]; v.set(k); }
-function updateKeysLine() { const el = $('keysline'); if (!el) return; el.hidden = touchOn(); const t = $('touchline'); if (t) t.hidden = !touchOn(); }
+// v29.2: keyboard keys drawn as keycaps - on the Duel screen, the home screen, the first seconds of a fight and the pause screen (computer only, never on touch)
+const kc = (k, w) => `<kbd class="kc${w ? ' ' + w : ''}">${k}</kbd>`;
+function keysHtml(o) { o = o || {}; const p2 = o.p2;
+  const fly = p2 ? `<div class="kpad">${kc('↑')}<span>${kc('←')}${kc('↓')}${kc('→')}</span></div>` : `<div class="kpad">${kc('W')}<span>${kc('A')}${kc('S')}${kc('D')}</span></div>`;
+  return `<div class="keys-p${o.cls ? ' ' + o.cls : ''}">${o.who ? `<b class="kwho">${o.who}</b>` : ''}<div class="kg">${fly}<i>Fly${p2 || o.noAlt ? '' : ' <em>or arrows</em>'}</i></div><div class="kg">${p2 ? kc('/') : kc('Space', 'wide')}<i>Fire</i></div><div class="kg">${p2 ? kc('.') : kc('Shift', 'mid')}<i>Special</i></div>${o.pause ? `<div class="kg">${kc('P')}<i>Pause</i></div><div class="kg">${kc('Esc', 'mid')}<i>Menu</i></div>` : ''}</div>`; }
+function homeKeys() { const el = $('h-keys'); if (el) el.innerHTML = touchOn() ? 'Touch: steer with your left thumb, fire and special on the right' : keysHtml({ pause: false }); }
+function updateKeysLine() { const el = $('keysline'); if (!el) return; const t = $('touchline'); if (t) t.hidden = !touchOn(); el.hidden = touchOn() || G.online;
+  if (!el.hidden) { const pvp = G.diff === 'pvp'; const h = pvp ? keysHtml({ who: 'Player 1', cls: 'p1', noAlt: true }) + keysHtml({ who: 'Player 2', cls: 'p2', p2: true }) : keysHtml({ pause: true }); if (el.dataset.h !== h) { el.innerHTML = h; el.dataset.h = h; } } }
+function keysHud() { const el = $('keyshud'); if (!el) return; const show = !touchOn() && G.mode === 'fight' && G.st && !G.card && (G.paused || (G.st.t < 8 && G.human[G.me || 0]));
+  if (!show) { if (!el.hidden) el.hidden = true; return; } const pvp = G.human[0] && G.human[1]; const big = !!G.paused; const h = (pvp ? keysHtml({ who: 'P1', noAlt: true }) + keysHtml({ who: 'P2', p2: true }) : keysHtml({ pause: true })) + (big ? '' : '');
+  if (el.dataset.h !== h) { el.innerHTML = h; el.dataset.h = h; } el.classList.toggle('big', big); el.hidden = false; el.style.opacity = big ? 1 : Math.max(0, Math.min(1, (8 - G.st.t) / 1.2)); }
 const portraits = {}; function animatePortraits(dt) { if (G.mode !== 'select' && G.mode !== 'home' && G.mode !== 'fleetsel' && G.mode !== 'between' && G.mode !== 'reef' && G.mode !== 'codex') return; document.querySelectorAll('canvas.port').forEach((c) => { const k = c.dataset.k; const p = portraits[k] || (portraits[k] = makePlayer(k)); p.update(dt, [0, 0], 0);
   p.render(fxDraw); const g = c.getContext('2d'); g.clearRect(0, 0, c.width, c.height); const bb = portBox(k, p); // v28: fit the ship's real outline (antennae, tails) inside the card
     const sc = Math.min(c.width * 0.9 / bb.w, c.height * 0.84 / bb.h); g.save(); g.translate(c.width / 2, c.height / 2); g.scale(sc, sc); g.drawImage(p.can, -bb.cx, -bb.cy); g.restore(); }); }
@@ -3923,7 +3950,11 @@ function applyAudioOpt() { AU.muted = OPT.sound === 'off'; AU.musicVol = OPT.mus
 function saveOpt() { applyAudioOpt(); try { localStorage.setItem('duelArena.tl', JSON.stringify(OPT.tl || null)); localStorage.setItem('duelArena.tsize', OPT.tsize || 'm'); localStorage.setItem('duelArena.sound', OPT.sound); localStorage.setItem('duelArena.music', OPT.music); localStorage.setItem('duelArena.controls', OPT.controls); localStorage.setItem('duelArena.aim', OPT.aim ? 'on' : 'off'); localStorage.setItem('duelArena.arena', OPT.arena); } catch (e) {} }
 const COARSE = (() => { try { return (('ontouchstart' in window) || navigator.maxTouchPoints > 0) && window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } })();
 function touchOn() { return OPT.controls === 'touch' || (OPT.controls === 'auto' && COARSE); }
-const TOUCH = { stick: { id: null, ox: 0, oy: 0, x: 0, y: 0, mag: 0, ang: 0 }, fire: null, special: null, back: null, pulse: 0 };
+const TOUCH = { stick: { id: null, ox: 0, oy: 0, x: 0, y: 0, mag: 0, ang: 0 }, fire: null, special: null, back: null, pulse: 0, live: new Set() };
+// v29.2: a release can arrive while another screen is up, or never arrive at all (the iPad dock or a system swipe steals the finger).
+// Every release is honoured in any mode, controls reset at the start of every fight, and a control whose finger is gone lets go by itself.
+function touchReset() { const T = TOUCH; T.stick.id = null; T.stick.mag = 0; T.fire = null; T.special = null; T.back = null; T.live.clear(); }
+function touchSweep() { const T = TOUCH; if (T.stick.id !== null && !T.live.has(T.stick.id)) { T.stick.id = null; T.stick.mag = 0; } for (const k of ['fire', 'special', 'back']) if (T[k] !== null && !T.live.has(T[k])) T[k] = null; }
 function safe() { const cs = getComputedStyle(document.documentElement); const g = (n) => parseFloat(cs.getPropertyValue(n)) || 0; return { l: g('--sal'), r: g('--sar'), t: g('--sat'), b: g('--sab') }; }
 function touchLayout() { // in canvas pixels
   const sa = safe(); const cw = W / DPR, ch = H / DPR; const k = Math.max(1, Math.min(1.35, Math.min(cw, ch) / 390)) * DPR;
@@ -3945,12 +3976,14 @@ function tlEditor(open) { const ov = $('tlayout'); if (!ov) return; ov.hidden = 
   [...$('tl-size').children].forEach((b) => { b.setAttribute('aria-pressed', String(b.dataset.v === (OPT.tsize || 'm'))); b.onclick = () => { OPT.tsize = b.dataset.v; [...$('tl-size').children].forEach((x) => x.setAttribute('aria-pressed', String(x === b))); $('tl-area').dataset.size = b.dataset.v; }; }); $('tl-area').dataset.size = OPT.tsize || 'm'; }
 function hit(b, x, y, pad) { return Math.hypot(x - b.x, y - b.y) < b.r * (pad || 1.25); }
 function onPointer(e) {
+  if (e.type === 'pointerup' || e.type === 'pointercancel' || e.type === 'lostpointercapture') { const T = TOUCH, id = e.pointerId; T.live.delete(id); if (T.stick.id === id) { T.stick.id = null; T.stick.mag = 0; } if (T.fire === id) T.fire = null; if (T.special === id) T.special = null; if (T.back === id) T.back = null; return; }
+  if (e.type === 'pointerdown') TOUCH.live.add(e.pointerId);
   if (!touchOn() || (G.mode !== 'fight' && G.mode !== 'over') || !G.st) return; if (e.pointerType === 'mouse' && OPT.controls !== 'touch') return;
   const r = cv.getBoundingClientRect(); const x = (e.clientX - r.left) * DPR, y = (e.clientY - r.top) * DPR; const Lo = touchLayout(); const T = TOUCH; const id = e.pointerId;
   if (e.type === 'pointerdown') { audioInit(); try { cv.setPointerCapture(id); } catch (err) {}
     const lr = G.types[0] === 'lr';
     if (hit(Lo.fire, x, y)) T.fire = id; else if (hit(Lo.special, x, y)) T.special = id; else if (lr && hit(Lo.back, x, y)) T.back = id;
-    else if ((Lo.stickLeft ? x < Lo.half : x >= Lo.half) && T.stick.id === null) { Object.assign(T.stick, { id, ox: x, oy: y, x, y, mag: 0 }); }
+    else if (Lo.stickLeft ? x < Lo.half : x >= Lo.half) { if (T.stick.id !== null) T.live.delete(T.stick.id); Object.assign(T.stick, { id, ox: x, oy: y, x, y, mag: 0 }); } // a new thumb on the stick side always takes the stick
     e.preventDefault(); return; }
   if (e.type === 'pointermove') { if (T.stick.id === id) { const dx = x - T.stick.ox, dy = y - T.stick.oy; const L = Math.hypot(dx, dy); const m = Math.min(1, L / Lo.stickR);
       if (L > Lo.stickR * 1.25) { T.stick.ox = x - dx / L * Lo.stickR * 1.25; T.stick.oy = y - dy / L * Lo.stickR * 1.25; } T.stick.x = x; T.stick.y = y; T.stick.mag = m; if (L > 4) T.stick.ang = Math.atan2(dy, dx); }
@@ -3958,6 +3991,9 @@ function onPointer(e) {
   if (e.type === 'pointerup' || e.type === 'pointercancel' || e.type === 'lostpointercapture') { if (T.stick.id === id) { T.stick.id = null; T.stick.mag = 0; } if (T.fire === id) T.fire = null; if (T.special === id) T.special = null; if (T.back === id) T.back = null; }
 }
 ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => cv.addEventListener(t, onPointer, { passive: false }));
+['pointerup', 'pointercancel'].forEach((t) => window.addEventListener(t, onPointer, true)); // a finger lifted over another screen still lets go
+window.addEventListener('touchend', (e) => { if (!e.touches.length) touchReset(); }, true); window.addEventListener('touchcancel', () => touchReset(), true);
+['blur', 'pagehide'].forEach((t) => window.addEventListener(t, touchReset)); document.addEventListener('visibilitychange', () => { if (document.hidden) touchReset(); });
 function drawTouch() { if (!touchOn() || !G.st || G.mode !== 'fight') return; const Lo = touchLayout(); const T = TOUCH; const s = G.st.ships[G.me || 0]; if (!G.human[G.me || 0]) return; const col = ACC[s.type]; const k = Lo.k; ctx.setTransform(1, 0, 0, 1, 0, 0);
   // joystick: floating under the thumb, a faint resting ring otherwise
   const st = T.stick; const ox = st.id !== null ? st.ox : Lo.rest.x, oy = st.id !== null ? st.oy : Lo.rest.y;
@@ -4011,7 +4047,7 @@ function buildFleetSelect() { const own = S.FLEET[FL.side]; FL.pick = FL.pick.fi
   if (!FL.focus || !own.includes(FL.focus)) FL.focus = FL.pick[FL.pick.length - 1] || own[0]; if (!DV.fl) DV.fl = demoBlock($('fl-det'), FL.focus); DV.fl.set(FL.focus); // v28: the last ship you tapped, in action
   $('fl-go').disabled = FL.pick.length !== FL.size; $('fl-go').style.opacity = FL.pick.length === FL.size ? 1 : 0.45;
   const seg = (id, get, set) => [...$(id).children].forEach((b) => { b.setAttribute('aria-pressed', String(String(get()) === b.dataset.v)); b.onclick = () => { sfx('ui'); set(b.dataset.v); buildFleetSelect(); }; });
-  seg('fl-side', () => FL.side, (v) => { FL.side = v; FL.pick = []; }); seg('fl-size', () => FL.size, (v) => { FL.size = +v; });
+  seg('fl-side', () => FL.side, (v) => { FL.side = v; FL.pick = []; }); seg('fl-diff', () => (G.diff === 'pvp' ? 'normal' : G.diff), (v) => { G.diff = v; }); // v29.2: packs and Reef War pick their own difficulty seg('fl-size', () => FL.size, (v) => { FL.size = +v; });
   $('fl-rand').onclick = () => { sfx('ui'); FL.pick = [...own].sort(() => Math.random() - 0.5).slice(0, FL.size); buildFleetSelect(); };
   $('fl-back').onclick = () => { sfx('ui'); $('fleet').hidden = true; showSelect(); };
   $('fl-go').textContent = FL.reef ? 'Start Reef War' : 'Start pack battle'; $('fl-title').textContent = FL.reef ? 'Reef War' : 'Pack Battle'; $('fl-sub').textContent = FL.reef ? 'Pick the beasts you take to war. Move them across the reef map; when two packs meet, they duel.' : 'One at a time. The winner stays in, damaged. Last beast standing wins.'; $('fl-size').hidden = !!FL.reef; $('fl-fog').hidden = !FL.reef; seg('fl-fog', () => (FL.fog ? 'on' : 'off'), (v) => { FL.fog = v === 'on'; });
@@ -4100,7 +4136,7 @@ window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; }
 /* ---------------- loop ---------------- */
 const capture = { on: false };
 let last = 0;
-function frame(ts) { if (capture.on) return; requestAnimationFrame(frame); const dt = Math.min(0.05, last ? (ts - last) / 1000 : 1 / 60); last = ts; try { padPause(); checkPortrait(); if ((G.mode === 'select' || G.mode === 'home') || G.mode === 'fleetsel' || G.mode === 'between' || G.mode === 'reef' || G.mode === 'codex') animatePortraits(dt); tick(dt); render(); demoFrame(dt); } catch (err) { console.error(err); } }
+function frame(ts) { if (capture.on) return; requestAnimationFrame(frame); const dt = Math.min(0.05, last ? (ts - last) / 1000 : 1 / 60); last = ts; try { padPause(); checkPortrait(); if ((G.mode === 'select' || G.mode === 'home') || G.mode === 'fleetsel' || G.mode === 'between' || G.mode === 'reef' || G.mode === 'codex') animatePortraits(dt); tick(dt); render(); try { keysHud(); if (G.mode === 'select') updateKeysLine(); if (G.mode === 'home' && !homeKeys.done) { homeKeys(); homeKeys.done = true; } } catch (e) {} demoFrame(dt); } catch (err) { console.error(err); } }
 // ===== Reef War (v16 prototype, 6 Nov 2026): two fleets of 4 on a sea map; take reefs for pearls, repairs and extra moves; every clash is a fleet battle =====
 const RW_N = [ // v20: sites and lanes follow the painted map (reefwar_map_concept_v01); game coordinates are 1600 x 900
   { id: 'h0', x: 152, y: 373, t: 'home', name: 'Coral Crown' },
@@ -4609,7 +4645,7 @@ function demoBlock(host, type, opts) { host.innerHTML = `<div class="dm"><div cl
   caps.forEach((c, i) => { c.onclick = (e) => { e.stopPropagation(); try { sfx('ui'); } catch (x) {} demoNew(v); if (i === 1 && v.g) v.t = DEMO_MAIN - 0.01; }; });
   more.onclick = (e) => { e.stopPropagation(); long.hidden = !long.hidden; more.classList.toggle('on', !long.hidden); };
   v.set = (k) => { demoSet(v, k); fill(k); }; return v; }
-setTimeout(() => Object.assign(window.GAME || (window.GAME = {}), { demoTimes: () => DEMO.views.map((v) => +v.t.toFixed(2)), demoBlock, demoErr: () => DEMO.err && String(DEMO.err.stack || DEMO.err) }), 0);
+setTimeout(() => Object.assign(window.GAME || (window.GAME = {}), { touchState: () => ({ id: TOUCH.stick.id, mag: +TOUCH.stick.mag.toFixed(2), live: [...TOUCH.live], mode: G.mode }), demoTimes: () => DEMO.views.map((v) => +v.t.toFixed(2)), demoBlock, demoErr: () => DEMO.err && String(DEMO.err.stack || DEMO.err) }), 0);
 
 function boot() { loadOpt(); resize(); buildSelect(); logCount(); homeWire(); G.mode = 'home'; try { $('rwcont').hidden = !rwSaved(); } catch (e) {} requestAnimationFrame(frame); }
 window.GAME = { debugKill(i) { const s = G.st.ships[i]; if (!s.alive) return; s.hull = 0; s.alive = false; s.deathT = G.st.t; G.st.over = true; G.st.winner = 1 - i; G.st.endT = G.st.t; handleEvents([{ type: 'death', ship: i, x: s.x, y: s.y }]); }, readLog, caption(txt) { ctx.setTransform(1, 0, 0, 1, 0, 0); const u = DPR; ctx.font = `500 ${13 * u}px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`; ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(239,230,214,0.85)'; ctx.fillText(txt, 22 * u, H - 40 * u); ctx.fillStyle = 'rgba(239,230,214,0.4)'; ctx.fillRect(22 * u, H - 58 * u, 26 * u, 1.5 * u); }, G, cam, startMatch, tick, render, resize, capture, showSelect, nextMatchup, sel, keys, audio: AU, audioInit, musicFor, TOUCH, OPT, touchLayout, saveOpt, buildSelect };
